@@ -155,3 +155,11 @@ main.py
 | Add a new pre-flight check | `drone/controller.py` → `preflight_ok()` |
 | Change LED colours | `drone/enums.py` → `LedColor` |
 | Change log format or filename pattern | `drone/logger.py` |
+
+
+# Install litewing library
+```bash
+git clone https://github.com/Circuit-Digest/LiteWing-Library.git
+cd LiteWing-Library
+pip install -e .
+```
