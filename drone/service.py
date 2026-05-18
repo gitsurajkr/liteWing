@@ -1,9 +1,6 @@
-# drone/service.py  –  Orchestrator: wires interface + controller + logger.
-# This is the only public entry point called by main.py.
-
 import time
 from .config import DroneConfig
-from .enums import MissionResult
+from .enums import MissionResult, MissionLevel
 from .interface import DroneInterface
 from .controller import MissionController
 from .logger import FlightLogger
@@ -16,7 +13,7 @@ class DroneService:
         self._controller = MissionController(self._interface, cfg)
         self._logger     = FlightLogger(self._interface, cfg)
 
-    def run(self) -> MissionResult:
+    def run(self, level: MissionLevel) -> MissionResult:
         result = MissionResult.EMERGENCY
         try:
             print(f"[SVC] Connecting to {self._cfg.ip}...")
@@ -24,11 +21,14 @@ class DroneService:
             print("[SVC] Waiting for telemetry (2 s)...")
             time.sleep(2)
 
-            if not self._controller.preflight_ok():
+            if not self._controller.preflight_ok(level):
                 return MissionResult.SENSOR_FAIL
 
-            self._logger.start()
-            result = self._controller.run()
+            # L0/L1 don't fly → no CSV needed
+            if level not in (MissionLevel.L0_ARM, MissionLevel.L1_TELEMETRY):
+                self._logger.start()
+
+            result = self._controller.run(level)
 
         except KeyboardInterrupt:
             print("\n[SVC] Ctrl-C — emergency stop!")

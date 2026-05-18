@@ -31,3 +31,23 @@ class MissionResult(Enum):
     BATTERY_LOW   = auto()
     SENSOR_FAIL   = auto()
     EMERGENCY     = auto()
+
+
+class MissionLevel(str, Enum):
+    L0_ARM       = "L0"   # arm only, no takeoff — verifies motors unlock
+    L1_TELEMETRY = "L1"   # no motors – stream sensors for N seconds
+    L2_HOVER     = "L2"   # takeoff → hover in place → land
+    L3_ALTITUDE  = "L3"   # takeoff low → climb → descend → land
+    L4_WAYPOINTS = "L4"   # full square mission
+
+    @classmethod
+    def parse(cls, value: str) -> "MissionLevel":
+        """Accept 'L1', 'l1', '1', etc."""
+        v = str(value).strip().upper()
+        if not v.startswith("L"):
+            v = "L" + v
+        for level in cls:
+            if level.value == v:
+                return level
+        valid = ", ".join(l.value for l in cls)
+        raise ValueError(f"Unknown level '{value}'. Valid: {valid}")

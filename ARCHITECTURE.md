@@ -14,6 +14,30 @@ Each layer has one job. Nothing skips a layer.
 
 ---
 
+## Staged test levels
+
+You run one level at a time via CLI arg. Move to the next only when the previous works.
+
+```
+python main.py L1   # telemetry only  — no motors, prints sensors for 10 s
+python main.py L2   # hover in place  — takeoff → hover → land
+python main.py L3   # altitude check  — low → climb → descend → land
+python main.py L4   # waypoint square — full mission
+```
+
+| Level | What it does | Tuning keys in config |
+|---|---|---|
+| `L1_TELEMETRY` | Connect, stream battery/height/IMU. **No arm, no motors.** Confirms link + sensors. | `l1_duration`, `l1_print_interval` |
+| `L2_HOVER` | Arm → takeoff → hover → land. **No XY movement.** Confirms altitude hold + trim. | `hover_height`, `l2_hover_seconds` |
+| `L3_ALTITUDE` | Take off low → climb → descend → land. Confirms vertical control. | `l3_low_height`, `l3_high_height`, `l3_hold_seconds` |
+| `L4_WAYPOINTS` | Full waypoint square with battery monitoring at each point. | `mission_waypoints`, `waypoint_speed` |
+
+The controller has one method per level (`_run_l1_telemetry`, `_run_l2_hover`, etc.)
+and a `run(level)` dispatcher. `preflight_ok(level)` does a lighter check for L1
+(battery only) and a full check (battery + ToF + IMU tilt) for L2/L3/L4.
+
+---
+
 ## DroneInterface — `interface.py`
 
 **Job:** Be the only file in the project that ever calls `LiteWing`. Everyone else

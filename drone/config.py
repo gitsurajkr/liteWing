@@ -27,6 +27,21 @@ class DroneConfig:
     hover_after_takeoff: float = 2.0    # settle after takeoff (s)
     hover_at_end: float = 3.0           # hold before landing (s)
 
+    # ── L0: Arm-only test ─────────────────────────────────────────────────────
+    l0_hold_seconds: float = 3.0        # how long to keep motors armed (no takeoff)
+
+    # ── L1: Telemetry-only test ───────────────────────────────────────────────
+    l1_duration: float = 10.0           # seconds of sensor streaming
+    l1_print_interval: float = 0.5      # seconds between prints
+
+    # ── L2: Hover-in-place test ───────────────────────────────────────────────
+    l2_hover_seconds: float = 5.0       # how long to hold position
+
+    # ── L3: Altitude up/down test ─────────────────────────────────────────────
+    l3_low_height: float = 0.25         # initial hover height (m)
+    l3_high_height: float = 0.45        # climb target (m)
+    l3_hold_seconds: float = 2.0        # hold at each height
+
     # ── Waypoint navigation ────────────────────────────────────────────────────
     # Keep moves ≤ 0.5 m for first indoor tests (1 m² clear area is enough).
     # +X = forward, -X = backward, +Y = left, -Y = right

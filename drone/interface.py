@@ -42,6 +42,10 @@ class DroneInterface:
     def hover(self, seconds: float) -> None:
         self._drone.hover(seconds)
 
+    def change_height(self, delta: float) -> None:
+        """Climb (+) or descend (-) by delta metres while flying."""
+        self._drone.change_height(delta)
+
     def fly_to(self, x: float, y: float,
                z: float | None = None,
                yaw: float | None = None,
